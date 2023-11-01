@@ -4,7 +4,6 @@ from textual.widgets import Header, Footer, Static, Button, Markdown
 from textual.containers import ScrollableContainer
 from time import monotonic
 from textual.reactive import reactive
-from textual.message import Message
 
 
 class ClockWork(Static):
@@ -27,7 +26,7 @@ class ClockWork(Static):
         minutes, seconds = divmod(time, 60)
         hours, minutes = divmod(minutes, 60)
         self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
-        if seconds >= 1:
+        if minutes >= 10:
             stop_button = self.parent.parent.query_one("#stop", Button)
             stop_button.disabled = False
 
@@ -90,8 +89,6 @@ class MyApp(App):
             self.text += "\t"
         elif event.key == "enter":
             self.text += "\n\n"
-        # with open("lark.txt", "w") as f:
-        #     f.write(self.text)
 
 
 if __name__ == "__main__":
