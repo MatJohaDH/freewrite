@@ -70,7 +70,7 @@ class Timer(Static):
         yield ClockWork()
 
 
-class MyApp(App):
+class Freewrite(App):
     text = ""
 
     CSS_PATH = "layout.css"
@@ -92,5 +92,5 @@ class MyApp(App):
 
 
 if __name__ == "__main__":
-    app = MyApp()
+    app = Freewrite()
     app.run()
