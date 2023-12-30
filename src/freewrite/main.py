@@ -1,11 +1,13 @@
 from textual.app import App, ComposeResult
 from textual import events
 from textual.widgets import Header, Footer, Static, Button, Markdown
-from textual.containers import ScrollableContainer
+from textual.containers import ScrollableContainer, Center
 from time import monotonic
 from textual.reactive import reactive
 
+
 from collections import namedtuple
+import sys
 
 HourMinuteSecond = namedtuple('HourMinuteSecond', ['h', 'm', 's'], defaults=(0, 10, 0))
 
@@ -92,7 +94,38 @@ class Freewrite(App):
     """A textual-based tool for structurng **freewriting***."""
     text = ""
 
-    CSS_PATH = "layout.css"
+    CSS = """Timer {
+        layout: horizontal;
+        height: 5;
+        margin: 1;
+        min-width: 50;
+        padding: 1;
+    }
+
+    ClockWork {
+        content-align: center middle;
+        height: 3;
+    }
+
+    Button {
+        width: 16;
+
+    }
+
+    #start {
+        dock: left;
+    }
+
+    #stop {
+        dock: right;
+    }
+
+    Markdown {
+        align: center top;
+        width: 60%;
+
+    }
+    """
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -107,7 +140,7 @@ class Freewrite(App):
             This text will be replaced with what you wrote once you hit the *Stop* button,
             which will be activated once the timer reaches 0.0.
             """)
-        yield ScrollableContainer(Countdown(), self.mark)
+        yield ScrollableContainer(Countdown(), Center(self.mark))
 
     def on_key(self, event: events.Key) -> None:
         """Method that captures all keystrokes and stores all printable characters for printing out later."""
@@ -119,7 +152,9 @@ class Freewrite(App):
         elif event.key == "enter":
             self.text += "\n\n"
 
-
-if __name__ == "__main__":
+def app():
     app = Freewrite()
     app.run()
+
+if __name__ == "__main__":
+    sys.exit(app())
