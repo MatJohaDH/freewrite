@@ -5,13 +5,22 @@ from textual.containers import ScrollableContainer
 from time import monotonic
 from textual.reactive import reactive
 
+from collections import namedtuple
+
+HourMinuteSecond = namedtuple('HourMinuteSecond', ['h', 'm', 's'], defaults=(0, 10, 0))
+
+def tuple_time(time_tuple: tuple) -> float:
+    """Calculate seconds from a H,M,S tuple."""
+    return float(sum(value*unit for value, unit in zip(time_tuple, (3600, 60, 1))))
+
 
 class ClockWork(Static):
     """A widget to display elapsed time."""
 
     start_time = reactive(monotonic)
-    time = reactive(0.0)
-    total = reactive(0.0)
+    target = HourMinuteSecond(0, 10, 0)
+    total = tuple_time(target)
+    time = reactive(tuple_time(target))
 
     def on_mount(self) -> None:
         """Event handler called when widget is added to the app."""
@@ -19,26 +28,32 @@ class ClockWork(Static):
 
     def update_time(self) -> None:
         """Method to update time to current."""
-        self.time = self.total + (monotonic() - self.start_time)
+        self.time = self.total - (monotonic() - self.start_time)
 
     def watch_time(self, time: float) -> None:
         """Called when the time attribute changes."""
-        minutes, seconds = divmod(time, 60)
+
+        minutes, seconds = divmod(abs(time), 60)
         hours, minutes = divmod(minutes, 60)
-        self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
-        if minutes >= 10:
+
+        sign = '-' if time < 0 else ''
+        self.update(f"{sign}{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
+
+        if time <= 0:
             stop_button = self.parent.parent.query_one("#stop", Button)
             stop_button.disabled = False
+
 
     def start(self) -> None:
         """Method to start (or resume) time updating."""
         self.start_time = monotonic()
+        self.total = tuple_time(self.target)
         self.update_timer.resume()
 
     def stop(self) -> None:
         """Method to stop the time display updating."""
         self.update_timer.pause()
-        self.total += monotonic() - self.start_time
+        self.total -= (monotonic() - self.start_time)
         self.time = self.total
 
     def reset(self) -> None:
@@ -47,8 +62,11 @@ class ClockWork(Static):
         self.time = 0
 
 
-class Timer(Static):
+class Countdown(Static):
+    """Countdown that cannot be stopped until the time runs out."""
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Method to register button clicks and start or stop the countdown."""
         button_id = event.button.id
         time_display = self.query_one(ClockWork)
 
@@ -71,6 +89,7 @@ class Timer(Static):
 
 
 class Freewrite(App):
+    """"""
     text = ""
 
     CSS_PATH = "layout.css"
@@ -78,10 +97,20 @@ class Freewrite(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
-        self.mark = Markdown(markdown="mark")
-        yield ScrollableContainer(Timer(), self.mark)
+        self.mark = Markdown(
+            markdown=""" # Freewrite \n
+
+            Write without stopping, backtracking or editing for 10 minutes.
+
+            Press the *Start* button in the top-right corner to start.
+
+            This text will be replaced with what you wrote once you hit the *Stop* button,
+            which will be activated once the timer reaches 0.0.
+            """)
+        yield ScrollableContainer(Countdown(), self.mark)
 
     def on_key(self, event: events.Key) -> None:
+        """Method that captures all keystrokes and stores all printable characters for printing out later."""
         if event.is_printable:
             self.text += event.character
             self.mark._markdown += event.character
