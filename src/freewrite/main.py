@@ -89,7 +89,7 @@ class Countdown(Static):
 
 
 class Freewrite(App):
-    """"""
+    """A textual-based tool for structurng **freewriting***."""
     text = ""
 
     CSS_PATH = "layout.css"

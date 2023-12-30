@@ -1,5 +1,10 @@
 # Freewrite
 
+[![PyPI - Version](https://img.shields.io/pypi/v/hatch-demo.svg)](https://pypi.org/project/hatch-demo)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/hatch-demo.svg)](https://pypi.org/project/hatch-demo)
+
+-----
+
 The concepr of **freewriting** comes from the book
 *Writing Without Teachers* (1973) by Peter Elbow, who has made a summary
 publicly available
@@ -16,6 +21,23 @@ However, it takes some extra effort to not going back and reading or editing one
 effort that can better be focused on writing.
 This app prevents this backtracking by not showing you what you write,
 until the time is up and you press the stop button.
+
+**Table of Contents**
+
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install hatch-demo
+```
+
+## License
+
+`hatch-demo` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
+
 
 # Todo:
  - [ ] Add custom time length
