@@ -152,9 +152,9 @@ class Freewrite(App):
         elif event.key == "enter":
             self.text += "\n\n"
 
-def app():
-    app = Freewrite()
-    app.run()
+def cli():
+    freewriter = Freewrite()
+    freewriter.run()
 
 if __name__ == "__main__":
-    sys.exit(app())
+    cli()

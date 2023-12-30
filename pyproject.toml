@@ -24,7 +24,12 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "textual>=0.41.0",
+]
+
+[project.scripts]
+freewrite = "freewrite.main:cli"
 
 [project.urls]
 Documentation = "https://github.com/unknown/freewrite#readme"
@@ -57,7 +62,6 @@ python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 [tool.hatch.envs.types]
 dependencies = [
   "mypy>=1.0.0",
-  "textual>=0.41.0",
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/freewrite tests}"
@@ -77,6 +81,6 @@ tests = ["tests", "*/freewrite/tests"]
 [tool.coverage.report]
 exclude_lines = [
   "no cov",
-  "if __name__ == .__main__.:",
+  "if __name__ == .main__.:",
   "if TYPE_CHECKING:",
 ]
