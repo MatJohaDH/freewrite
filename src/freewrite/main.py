@@ -38,8 +38,11 @@ class ClockWork(Static):
         minutes, seconds = divmod(abs(time), 60)
         hours, minutes = divmod(minutes, 60)
 
+        minutes = f'{minutes:02,.0f}:' if minutes > 0 or hours > 0 else ''
+        hours = f'{hours:02,.0f}:' if hours > 0 else ''
+
         sign = '-' if time < 0 else ''
-        self.update(f"{sign}{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
+        self.update(f"{sign}{hours}{minutes}{seconds:05.2f}")
 
         if time <= 0:
             stop_button = self.parent.parent.query_one("#stop", Button)
@@ -75,6 +78,7 @@ class Countdown(Static):
         if button_id == "start":
             time_display.start()
             self.add_class("started")
+            self.parent.parent.parent.mark.update('# Session in progress\n\nKeep typing until the timer reaches `0.00`.')
             event.button.disabled = True
             self.parent.parent.parent.text = ""
         elif button_id == "stop":
@@ -138,7 +142,7 @@ class Freewrite(App):
             Press the *Start* button in the top-right corner to start.
 
             This text will be replaced with what you wrote once you hit the *Stop* button,
-            which will be activated once the timer reaches 0.0.
+            which will be activated once the timer reaches `0.00`.
             """)
         yield ScrollableContainer(Countdown(), Center(self.mark))
 
